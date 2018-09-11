@@ -1,0 +1,36 @@
+package com.company;
+
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
+
+public class Main {
+    private static OperatingSystemMXBean bean =
+            (com.sun.management.OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean();
+    private static float memoryPercent;
+    private static float cpuPercent;
+    public static void main(String[] args) {
+
+        while (true) {
+            try {
+                Thread.sleep(1000);
+            }
+            catch (InterruptedException ex) {
+                System.out.println("Interrupted Exception");
+            }
+            cpuLoad();
+            memoryLoad();
+
+        }
+    }
+    private static void cpuLoad() {
+        cpuPercent = (float)
+            ((com.sun.management.OperatingSystemMXBean) bean).getSystemCpuLoad() * 100;
+        System.out.println("Cpu Load: " + (int)cpuPercent + "%");
+    }
+    private static void memoryLoad() {
+        memoryPercent = ((float)(((com.sun.management.OperatingSystemMXBean) bean).getTotalPhysicalMemorySize() -
+             ((com.sun.management.OperatingSystemMXBean) bean).getFreePhysicalMemorySize()) /
+             (float)((com.sun.management.OperatingSystemMXBean) bean).getTotalPhysicalMemorySize()) * 100;
+        System.out.println("Memory Load: " + (int)memoryPercent + "%\n");
+    }
+}
