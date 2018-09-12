@@ -1,0 +1,61 @@
+package com.company;
+
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
+import java.util.Properties;
+
+public class Main {
+    private static OperatingSystemMXBean bean =
+            (com.sun.management.OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean();
+    private static float memoryPercent;
+    private static float cpuPercent;
+    public static void main(String[] args) {
+        while (true) {
+            try {
+                Thread.sleep(1000);
+            }
+            catch (InterruptedException ex) {
+                System.out.println("Interrupted Exception");
+            }
+            getSystemInfo();
+        }
+    }
+    private static int getCpuLoad() {
+        cpuPercent = (float)
+            ((com.sun.management.OperatingSystemMXBean) bean).getSystemCpuLoad() * 100;
+        return (int)cpuPercent;
+    }
+    private static int getMemoryLoad() {
+        memoryPercent = ((float)(((com.sun.management.OperatingSystemMXBean) bean).getTotalPhysicalMemorySize() -
+             ((com.sun.management.OperatingSystemMXBean) bean).getFreePhysicalMemorySize()) /
+             (float)((com.sun.management.OperatingSystemMXBean) bean).getTotalPhysicalMemorySize()) * 100;
+        return  (int)memoryPercent;
+    }
+    private static String getUserId() {
+        Properties properties = System.getProperties();
+        return properties.getProperty("user.name");
+    }
+    private static void getSystemInfo() {
+        System.out.println("User ID: " + getUserId());
+        printCpuLoad();
+        printMemoryLoad();
+    }
+    private static void printCpuLoad() {
+        int i;
+        System.out.print("CPU Load: ");
+        for (i = getCpuLoad(); i != 0; i--)
+            System.out.print("|");
+        for (i = 100 - getCpuLoad(); i != 0; --i)
+            System.out.print("-");
+        System.out.println(" " + getCpuLoad() + "%");
+    }
+    private static void printMemoryLoad() {
+        int i;
+        System.out.print("RAM Load: ");
+        for (i = getMemoryLoad(); i != 0; i--)
+            System.out.print("|");
+        for (i = 100 - getMemoryLoad(); i != 0; --i)
+            System.out.print("-");
+        System.out.println(" " + getMemoryLoad() + "%\n");
+    }
+}
